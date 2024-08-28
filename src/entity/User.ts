@@ -27,15 +27,14 @@ export class User extends BaseEntity {
   @Column('text', { unique: true })
   email: string;
 
-  @Field()
-  name: string;
-
   @Column()
   password: string;
 
+  @Field()
   @CreateDateColumn()
   createdAt: Date;
 
+  @Field()
   @UpdateDateColumn()
   updatedAt: Date;
 }
