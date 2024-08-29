@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   BaseEntity,
 } from 'typeorm';
-import { Module } from './Module';
+import { StudyModule } from './StudyModule';
 
 @ObjectType()
 @Entity()
@@ -21,9 +21,9 @@ export class Course extends BaseEntity {
   @Column()
   name: string;
 
-  @Field(() => Module)
-  @OneToMany(() => Module, (module) => module.courses)
-  modules: Module[];
+  @Field(() => StudyModule)
+  @OneToMany(() => StudyModule, (module) => module.courses)
+  modules: StudyModule[];
 
   @Field()
   @CreateDateColumn()

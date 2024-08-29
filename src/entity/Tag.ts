@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Lecture } from './Lecture';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Module } from './Module';
+import { StudyModule } from './StudyModule';
 
 @ObjectType()
 @Entity()
@@ -22,9 +22,9 @@ export class Tag extends BaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @Field(() => Module)
-  @ManyToMany(() => Module, (module) => module.tags)
-  modules: Module[];
+  @Field(() => StudyModule)
+  @ManyToMany(() => StudyModule, (module) => module.tags)
+  modules: StudyModule[];
 
   @Field(() => Lecture)
   @ManyToMany(() => Lecture, (lecture) => lecture.tags)

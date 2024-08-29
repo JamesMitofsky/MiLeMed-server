@@ -12,7 +12,7 @@ import {
 } from 'typeorm';
 import { Tag } from './Tag';
 import { Field, ID, ObjectType } from 'type-graphql';
-import { Module } from './Module';
+import { StudyModule } from './StudyModule';
 
 @ObjectType()
 @Entity()
@@ -25,10 +25,10 @@ export class Lecture extends BaseEntity {
   @Column()
   name: string;
 
-  @Field(() => Module)
-  @ManyToOne(() => Module, (module) => module.lectures)
+  @Field(() => StudyModule)
+  @ManyToOne(() => StudyModule, (module) => module.lectures)
   @JoinColumn({ name: 'moduleId' })
-  module: Module;
+  module: StudyModule;
 
   @Field(() => Tag)
   @ManyToMany(() => Tag, (tag) => tag.lectures)

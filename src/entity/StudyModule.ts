@@ -18,7 +18,7 @@ import { Field, ID, ObjectType } from 'type-graphql';
 
 @ObjectType()
 @Entity()
-export class Module extends BaseEntity {
+export class StudyModule extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
@@ -32,14 +32,14 @@ export class Module extends BaseEntity {
   @JoinColumn({ name: 'modeId' })
   courses: Course;
 
-  @Field(() => Module)
-  @ManyToOne(() => Module, (module) => module.children, { nullable: true })
+  @Field(() => StudyModule)
+  @ManyToOne(() => StudyModule, (module) => module.children, { nullable: true })
   @JoinColumn({ name: 'parentModuleId' })
-  parentModule: Module;
+  parentModule: StudyModule;
 
-  @Field(() => Module)
-  @OneToMany(() => Module, (module) => module.parentModule)
-  children: Module[];
+  @Field(() => StudyModule)
+  @OneToMany(() => StudyModule, (module) => module.parentModule)
+  children: StudyModule[];
 
   @Field(() => Lecture)
   @OneToMany(() => Lecture, (lecture) => lecture.module)
