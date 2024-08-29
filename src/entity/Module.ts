@@ -27,25 +27,25 @@ export class Module extends BaseEntity {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Course)
   @ManyToOne(() => Course, (course) => course.modules)
   @JoinColumn({ name: 'modeId' })
   courses: Course;
 
-  @Field()
+  @Field(() => Module)
   @ManyToOne(() => Module, (module) => module.children, { nullable: true })
   @JoinColumn({ name: 'parentModuleId' })
   parentModule: Module;
 
-  @Field()
+  @Field(() => Module)
   @OneToMany(() => Module, (module) => module.parentModule)
   children: Module[];
 
-  @Field()
+  @Field(() => Lecture)
   @OneToMany(() => Lecture, (lecture) => lecture.module)
   lectures: Lecture[];
 
-  @Field()
+  @Field(() => Tag)
   @ManyToMany(() => Tag, (tag) => tag.modules)
   @JoinTable()
   tags: Tag[];

@@ -25,12 +25,12 @@ export class Lecture extends BaseEntity {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Module)
   @ManyToOne(() => Module, (module) => module.lectures)
   @JoinColumn({ name: 'moduleId' })
   module: Module;
 
-  @Field()
+  @Field(() => Tag)
   @ManyToMany(() => Tag, (tag) => tag.lectures)
   @JoinTable()
   tags: Tag[];

@@ -22,11 +22,11 @@ export class Tag extends BaseEntity {
   @Column({ unique: true })
   name: string;
 
-  @Field()
+  @Field(() => Module)
   @ManyToMany(() => Module, (module) => module.tags)
   modules: Module[];
 
-  @Field()
+  @Field(() => Lecture)
   @ManyToMany(() => Lecture, (lecture) => lecture.tags)
   lectures: Lecture[];
 

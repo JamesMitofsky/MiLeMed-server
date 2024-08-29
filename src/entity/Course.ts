@@ -21,7 +21,7 @@ export class Course extends BaseEntity {
   @Column()
   name: string;
 
-  @Field()
+  @Field(() => Module)
   @OneToMany(() => Module, (module) => module.courses)
   modules: Module[];
 
