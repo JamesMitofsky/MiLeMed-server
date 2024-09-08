@@ -2,25 +2,12 @@ import 'reflect-metadata';
 import { ApolloServer } from 'apollo-server-express';
 import Express from 'express';
 import { buildSchema } from 'type-graphql';
-import { DataSource } from 'typeorm';
 import cors from 'cors';
 
 import { RegisterResolver } from './modules/user/Register';
+import { AppDataSource } from './AppDataSource';
 
 const main = async () => {
-  const AppDataSource = new DataSource({
-    name: 'default',
-    type: 'postgres',
-    host: 'localhost',
-    port: 5432,
-    username: 'postgres',
-    password: 'postgres',
-    database: 'milemed',
-    synchronize: true,
-    logging: true,
-    entities: ['src/entity/*.*'],
-  });
-
   await AppDataSource.initialize()
     .then(() => {
       console.log('Data Source has been initialized!');
