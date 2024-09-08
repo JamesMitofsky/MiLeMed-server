@@ -13,6 +13,7 @@ import {
 import { Tag } from './Tag';
 import { Field, ID, ObjectType } from 'type-graphql';
 import { StudyModule } from './StudyModule';
+import { Image } from './Image';
 
 @ObjectType()
 @Entity()
@@ -24,6 +25,15 @@ export class Lecture extends BaseEntity {
   @Field()
   @Column()
   name: string;
+
+  @Column()
+  @Field()
+  content: string;
+
+  @Field(() => [Image])
+  @ManyToMany(() => Image, (image) => image.lectures)
+  @JoinTable()
+  images: Image[];
 
   @Field(() => StudyModule)
   @ManyToOne(() => StudyModule, (module) => module.lectures)

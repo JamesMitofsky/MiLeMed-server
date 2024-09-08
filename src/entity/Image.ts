@@ -3,31 +3,27 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
   CreateDateColumn,
   UpdateDateColumn,
   BaseEntity,
+  ManyToMany,
 } from 'typeorm';
-import { StudyModule } from './StudyModule';
+import { Lecture } from './Lecture';
 
 @ObjectType()
 @Entity()
-export class Course extends BaseEntity {
+export class Image extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
   @Column()
-  name: string;
+  url: string;
 
-  @Field()
-  @Column()
-  mode: string; // TODO: "theoretical" | "practical" create register enum for type-graphql
-
-  @Field(() => StudyModule)
-  @OneToMany(() => StudyModule, (module) => module.courses)
-  modules: StudyModule[];
+  @Field(() => [Lecture])
+  @ManyToMany(() => Lecture, (lecture) => lecture.images)
+  lectures: Lecture[];
 
   @Field()
   @CreateDateColumn()
