@@ -2,7 +2,6 @@ import 'reflect-metadata';
 // import { ApolloServer } from 'apollo-server-express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
-import Express from 'express';
 import { buildSchema } from 'type-graphql';
 import cors from 'cors';
 import { RegisterResolver } from './modules/user/Register';
@@ -30,11 +29,9 @@ const main = async () => {
   // Apollo Server
   const apolloServer = new ApolloServer<MyContext>({
     schema,
+    status400ForVariableCoercionErrors: true,
   });
   await apolloServer.start();
-
-  // Express Server
-  const app = Express();
 
   // Redis Client
   const redisClient = new Redis(
@@ -47,13 +44,8 @@ const main = async () => {
     console.error('Redis connection error:', err);
   });
 
-  // Cors Middleware
-  app.use(
-    cors({
-      credentials: true,
-      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
-    }),
-  );
+  // Express Server
+  const app = express();
 
   // Add session middleware
   app.use(
@@ -76,7 +68,10 @@ const main = async () => {
   // Apollo Server Middleware
   app.use(
     '/graphql',
-    cors<cors.CorsRequest>(),
+    cors<cors.CorsRequest>({
+      credentials: true,
+      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
+    }),
     express.json(),
     expressMiddleware(apolloServer, {
       context: async ({ req }) => ({ req }),
