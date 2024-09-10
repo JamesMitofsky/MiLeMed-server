@@ -9,7 +9,6 @@ import { AppDataSource } from './AppDataSource';
 import RedisStore from 'connect-redis';
 import session from 'express-session';
 import express from 'express';
-import { Redis } from 'ioredis';
 import { LoginResolver } from './modules/user/Login';
 import { MyContext } from './types/MyContext';
 import { MeResolver } from './modules/user/Me';
@@ -17,6 +16,7 @@ import { TestResolver } from './modules/Test';
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { useServer } from 'graphql-ws/lib/use/ws';
+import { redisClient } from './redis';
 
 const main = async () => {
   // TypeORM Initialization
@@ -38,34 +38,25 @@ const main = async () => {
   });
   await apolloServer.start();
 
-  // Redis Client
-  const redisClient = new Redis(
-    process.env.REDIS_URL || 'redis://localhost:6379',
-  );
-  redisClient.on('connect', () => {
-    console.log('Connected to Redis successfully');
-  });
-  redisClient.on('error', (err) => {
-    console.error('Redis connection error:', err);
-  });
-
   // Express Server
   const app = express();
 
   // Add session middleware
+  const redisStore = new RedisStore({
+    client: redisClient,
+  });
+
   app.use(
     session({
-      store: new RedisStore({
-        client: redisClient,
-      }),
+      store: redisStore,
       name: 'qid',
       secret: process.env.SESSION_SECRET || 'fallback_secret',
       resave: false,
       saveUninitialized: false,
       cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax for local, None for cross-origin requests
+        httpOnly: true, // in prod this should be true
+        secure: false, // process.env.NODE_ENV === 'production',
+        sameSite: 'none', // process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax for local, None for cross-origin requests
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
       },
     }),
@@ -74,13 +65,13 @@ const main = async () => {
   // Apollo Server Middleware
   app.use(
     '/graphql',
-    cors<cors.CorsRequest>({
+    cors({
       credentials: true,
       origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
     }),
     express.json(),
     expressMiddleware(apolloServer, {
-      context: async ({ req }) => ({ req }),
+      context: async ({ req, res }) => ({ req, res }),
     }),
   );
 
