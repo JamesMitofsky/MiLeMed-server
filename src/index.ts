@@ -10,8 +10,13 @@ import RedisStore from 'connect-redis';
 import session from 'express-session';
 import express from 'express';
 import { Redis } from 'ioredis';
-import { LoginResolver } from './modules/Login';
+import { LoginResolver } from './modules/user/Login';
 import { MyContext } from './types/MyContext';
+import { MeResolver } from './modules/user/Me';
+import { TestResolver } from './modules/Test';
+import { WebSocketServer } from 'ws';
+import { createServer } from 'http';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 const main = async () => {
   // TypeORM Initialization
@@ -23,7 +28,7 @@ const main = async () => {
   }
 
   const schema = await buildSchema({
-    resolvers: [RegisterResolver, LoginResolver],
+    resolvers: [RegisterResolver, LoginResolver, MeResolver, TestResolver],
   });
 
   // Apollo Server
@@ -60,6 +65,7 @@ const main = async () => {
       cookie: {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax for local, None for cross-origin requests
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
       },
     }),
@@ -78,8 +84,21 @@ const main = async () => {
     }),
   );
 
-  app.listen(4000, () => {
-    console.log('server started on http://localhost:4000/graphql');
+  // Create an HTTP server to attach both HTTP and WebSocket servers
+  const httpServer = createServer(app);
+
+  // Set up WebSocket server for GraphQL subscriptions
+  const wsServer = new WebSocketServer({
+    server: httpServer,
+    path: '/graphql',
+  });
+
+  // Use GraphQL WebSocket server
+  useServer({ schema }, wsServer);
+
+  // Start the HTTP server and listen for requests
+  httpServer.listen(4000, () => {
+    console.log('Server is now running on http://localhost:4000/graphql');
   });
 };
 
