@@ -1,13 +1,11 @@
 import 'reflect-metadata';
-// import { ApolloServer } from 'apollo-server-express';
+import 'dotenv/config';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { buildSchema } from 'type-graphql';
 import cors from 'cors';
 import { RegisterResolver } from './modules/user/Register';
-import { AppDataSource } from './AppDataSource';
-import RedisStore from 'connect-redis';
-import session from 'express-session';
+import { AppDataSource } from './modules/db/AppDataSource';
 import express from 'express';
 import { LoginResolver } from './modules/user/Login';
 import { MyContext } from './types/MyContext';
@@ -16,7 +14,7 @@ import { TestResolver } from './modules/Test';
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { useServer } from 'graphql-ws/lib/use/ws';
-import { redisClient } from './redis';
+import { readySession } from './modules/middleware/readySession';
 
 const main = async () => {
   // TypeORM Initialization
@@ -41,40 +39,14 @@ const main = async () => {
   // Express Server
   const app = express();
 
-  // Add session middleware
-  const redisStore = new RedisStore({
-    client: redisClient,
-  });
-
-  app.use(
-    session({
-      store: redisStore,
-      name: 'qid',
-      secret: process.env.SESSION_SECRET || 'fallback_secret',
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        httpOnly: true, // in prod this should be true
-        secure: true, // process.env.NODE_ENV === 'production',
-        sameSite: 'none', // process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax for local, None for cross-origin requests
-        maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
-      },
-    }),
-  );
-
-  // based on this comment: https://www.reddit.com/r/graphql/comments/pxhvi7/comment/hkfcgu3/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
-  app.set('trust proxy', 1);
+  app.use(readySession);
 
   // Apollo Server Middleware
   app.use(
     '/graphql',
     cors({
       credentials: true,
-      origin: [
-        'http://localhost:3000',
-        'https://studio.apollographql.com',
-        'https://sandbox.embed.apollographql.com',
-      ],
+      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
     }),
     express.json(),
     expressMiddleware(apolloServer, {
