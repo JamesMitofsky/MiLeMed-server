@@ -2,6 +2,6 @@ import 'express-session';
 
 declare module 'express-session' {
   interface Session {
-    userId: number;
+    connectedUser?: { id: number; name: string };
   }
 }

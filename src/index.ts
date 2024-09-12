@@ -55,19 +55,26 @@ const main = async () => {
       saveUninitialized: false,
       cookie: {
         httpOnly: true, // in prod this should be true
-        secure: false, // process.env.NODE_ENV === 'production',
+        secure: true, // process.env.NODE_ENV === 'production',
         sameSite: 'none', // process.env.NODE_ENV === 'production' ? 'none' : 'lax', // Lax for local, None for cross-origin requests
         maxAge: 1000 * 60 * 60 * 24 * 7 * 365, // 7 years
       },
     }),
   );
 
+  // based on this comment: https://www.reddit.com/r/graphql/comments/pxhvi7/comment/hkfcgu3/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+  app.set('trust proxy', 1);
+
   // Apollo Server Middleware
   app.use(
     '/graphql',
     cors({
       credentials: true,
-      origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
+      origin: [
+        'http://localhost:3000',
+        'https://studio.apollographql.com',
+        'https://sandbox.embed.apollographql.com',
+      ],
     }),
     express.json(),
     expressMiddleware(apolloServer, {
