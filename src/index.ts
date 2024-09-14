@@ -15,6 +15,7 @@ import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { readySession } from './modules/middleware/readySession';
+import { ConfirmUserResolver } from './modules/user/ConfirmUser';
 
 const main = async () => {
   // TypeORM Initialization
@@ -26,7 +27,13 @@ const main = async () => {
   }
 
   const schema = await buildSchema({
-    resolvers: [RegisterResolver, LoginResolver, MeResolver, TestResolver],
+    resolvers: [
+      RegisterResolver,
+      LoginResolver,
+      MeResolver,
+      TestResolver,
+      ConfirmUserResolver,
+    ],
   });
 
   // Apollo Server

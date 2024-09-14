@@ -27,6 +27,10 @@ export class LoginResolver {
       return null;
     }
 
+    if (!user.confirmed) {
+      return null;
+    }
+
     // send the user a cookie saying they're authenticated
     console.log('Before setting user:', ctx.req.session);
     ctx.req.session!.connectedUser = { id: user.id, name: user.name };
