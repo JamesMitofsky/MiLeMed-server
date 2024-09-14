@@ -1,28 +1,19 @@
-import { Resend } from 'resend';
+import { User } from '../entity/User';
+import { resendInstance } from '../modules/resendInstance';
+import { createConfirmationUrl } from './createConfirmationUrl';
 
-type SendConfirmationEmailArgs = {
-  toEmail: string;
-  url: string;
-};
-
-/**
- * Sends an email to the specified recipient with a provided link.
- * @param toEmail - The recipient's email address.
- * @param url - The link to include in the email content.
- * @returns A Promise that resolves when the email is sent.
- */
 export async function sendConfirmationEmail({
-  toEmail,
-  url,
-}: SendConfirmationEmailArgs): Promise<void> {
-  const resend = new Resend(process.env.RESEND_API_KEY);
+  email,
+  id,
+}: User): Promise<void> {
+  const url = await createConfirmationUrl(id);
 
-  console.log('Sending email to:', toEmail);
+  console.log('Sending email to:', email, 'with id:', id);
   console.log('Email confirmation link:', url);
 
-  await resend.emails.send({
+  await resendInstance.emails.send({
     from: 'MiLeMed <hey@notificiations.milemed.de>',
-    to: toEmail,
+    to: email,
     subject: 'Thanks for signing up — please confirm your email',
     html: `<a href="${url}">Click this link to confirm your email</a>`,
   });

@@ -4,17 +4,17 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { buildSchema } from 'type-graphql';
 import cors from 'cors';
-import { RegisterResolver } from './modules/user/Register';
 import { AppDataSource } from './modules/db/AppDataSource';
 import express from 'express';
-import { LoginResolver } from './modules/user/Login';
 import { MyContext } from './types/MyContext';
-import { MeResolver } from './modules/user/Me';
-import { TestResolver } from './modules/Test';
 import { WebSocketServer } from 'ws';
 import { createServer } from 'http';
 import { useServer } from 'graphql-ws/lib/use/ws';
 import { readySession } from './modules/middleware/readySession';
+import { RegisterResolver } from './modules/user/Register';
+import { LoginResolver } from './modules/user/Login';
+import { MeResolver } from './modules/user/Me';
+import { TestResolver } from './modules/Test';
 import { ConfirmUserResolver } from './modules/user/ConfirmUser';
 
 const main = async () => {

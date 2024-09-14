@@ -4,7 +4,6 @@ import bcrypt from 'bcryptjs';
 import { User } from '../../entity/User';
 import { RegisterInput } from './register/RegisterInput';
 import { sendConfirmationEmail } from '../../utils/sendConfirmationEmail';
-import { createConfirmationUrl } from '../../utils/createConfirmationUrl';
 
 @Resolver()
 export class RegisterResolver {
@@ -21,10 +20,7 @@ export class RegisterResolver {
       password: hashedPassword,
     }).save();
 
-    await sendConfirmationEmail({
-      toEmail: user.email,
-      url: await createConfirmationUrl(user.id),
-    });
+    await sendConfirmationEmail(user);
 
     return user;
   }
