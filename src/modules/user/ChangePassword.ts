@@ -1,18 +1,40 @@
-import { Resolver, Mutation, Arg } from 'type-graphql';
+import { Resolver, Mutation, Arg, Ctx } from 'type-graphql';
+import bcrypt from 'bcryptjs';
+
 import { User } from '../../entity/User';
-import { sendChangePasswordEmail } from '../../utils/sendChangePasswordEmail';
+import { MyContext } from '../../types/MyContext';
+import { ChangePasswordInput } from './inputs/ChangePasswordInput';
+import { redisClient } from '../db/redis';
+import { changePasswordPrefix } from '../../constants/redisPrefixes';
 
 @Resolver()
 export class ChangePasswordResolver {
-  @Mutation(() => Boolean)
-  async changePassword(@Arg('email') email: string): Promise<boolean> {
-    const user = await User.findOneBy({ email });
+  @Mutation(() => User, { nullable: true })
+  async changePassword(
+    @Arg('data')
+    { token, password }: ChangePasswordInput,
+    @Ctx() ctx: MyContext,
+  ): Promise<User | null> {
+    const userId = await redisClient.get(changePasswordPrefix + token);
 
-    if (!user) {
-      return false;
+    if (!userId) {
+      return null;
     }
 
-    await sendChangePasswordEmail(user);
-    return true;
+    const user = await User.findOneBy({ id: parseInt(userId) });
+
+    if (!user) {
+      return null;
+    }
+
+    await redisClient.del(changePasswordPrefix + token);
+
+    user.password = await bcrypt.hash(password, 12);
+
+    await user.save();
+
+    ctx.req.session!.connectedUser = user;
+
+    return user;
   }
 }

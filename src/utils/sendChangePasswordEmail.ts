@@ -1,5 +1,5 @@
 import { User } from '../entity/User';
-import { resendInstance } from 'src/modules/resendInstance';
+import { resendInstance } from '../modules/resendInstance';
 import { createChangePasswordUrl } from './createChangePasswordUrl';
 
 export async function sendChangePasswordEmail({
