@@ -18,6 +18,7 @@ import { TestResolver } from './modules/Test';
 import { ConfirmUserResolver } from './modules/user/ConfirmUser';
 import { RequestChangePasswordResolver } from './modules/user/RequestChangePassword';
 import { ChangePasswordResolver } from './modules/user/ChangePassword';
+import { LogoutResolver } from './modules/user/Logout';
 
 const main = async () => {
   // TypeORM Initialization
@@ -37,6 +38,7 @@ const main = async () => {
       ConfirmUserResolver,
       RequestChangePasswordResolver,
       ChangePasswordResolver,
+      LogoutResolver,
     ],
   });
 
