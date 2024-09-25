@@ -19,6 +19,9 @@ import { ConfirmUserResolver } from './modules/user/ConfirmUser';
 import { RequestChangePasswordResolver } from './modules/user/RequestChangePassword';
 import { ChangePasswordResolver } from './modules/user/ChangePassword';
 import { LogoutResolver } from './modules/user/Logout';
+import { graphqlUploadExpress } from 'graphql-upload-ts';
+import { UploadImageResolver } from './modules/image/UploadImage';
+import { FetchImageResolver } from './modules/image/FetchImage';
 
 const main = async () => {
   // TypeORM Initialization
@@ -39,6 +42,8 @@ const main = async () => {
       RequestChangePasswordResolver,
       ChangePasswordResolver,
       LogoutResolver,
+      UploadImageResolver,
+      FetchImageResolver,
     ],
   });
 
@@ -62,6 +67,7 @@ const main = async () => {
       origin: ['http://localhost:3000', 'https://studio.apollographql.com'],
     }),
     express.json(),
+    graphqlUploadExpress(),
     expressMiddleware(apolloServer, {
       context: async ({ req, res }) => ({ req, res }),
     }),

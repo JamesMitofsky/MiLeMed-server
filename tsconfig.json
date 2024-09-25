@@ -8,6 +8,9 @@
     "moduleResolution": "node",
     "declaration": false,
 
+    "allowJs": true,
+    "strict": false,
+
     "composite": false,
     "removeComments": true,
     "noImplicitAny": true,
