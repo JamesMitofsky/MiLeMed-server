@@ -6,8 +6,13 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ObjectType, Field, ID } from 'type-graphql';
+import { ObjectType, Field, ID, registerEnumType } from 'type-graphql';
+import { RoleEnum } from '../types/roleEnum';
 
+registerEnumType(RoleEnum, {
+  name: 'role', // Mandatory
+  description: 'The roles of the user', // Optional
+});
 @ObjectType()
 @Entity()
 export class User extends BaseEntity {
@@ -22,6 +27,14 @@ export class User extends BaseEntity {
   @Field()
   @Column('text', { unique: true })
   email: string;
+
+  @Field(() => RoleEnum)
+  @Column({
+    type: 'enum',
+    enum: RoleEnum,
+    default: RoleEnum.USER,
+  })
+  role: RoleEnum;
 
   @Column()
   password: string;

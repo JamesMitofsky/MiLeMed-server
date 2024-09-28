@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from 'type-graphql';
+import { Field, ID, ObjectType, registerEnumType } from 'type-graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,6 +9,12 @@ import {
   BaseEntity,
 } from 'typeorm';
 import { StudyModule } from './StudyModule';
+import { ModeEnum } from '../types/modeEnum';
+
+registerEnumType(ModeEnum, {
+  name: 'mode', // Mandatory
+  description: 'The roles of the user', // Optional
+});
 
 @ObjectType()
 @Entity()
@@ -21,9 +27,12 @@ export class Course extends BaseEntity {
   @Column()
   name: string;
 
-  @Field()
-  @Column()
-  mode: string; // TODO: "theoretical" | "practical" create register enum for type-graphql
+  @Field(() => ModeEnum)
+  @Column({
+    type: 'enum',
+    enum: ModeEnum,
+  })
+  role: ModeEnum;
 
   @Field(() => StudyModule)
   @OneToMany(() => StudyModule, (module) => module.courses)
