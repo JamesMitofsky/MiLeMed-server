@@ -10,8 +10,7 @@ export const AppDataSource = new DataSource({
   database: 'milemed',
   synchronize: process.env.NODE_ENV === 'development',
   logging: true,
-  ssl: {
-    rejectUnauthorized: false, // Necessary for Heroku
-  },
+  // weird solution for deployment to Heroku from: https://stackoverflow.com/a/73370183/5395435
+  ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false, // Necessary for Heroku
   entities: ['src/entity/*.*'],
 });
