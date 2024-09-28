@@ -1,5 +1,5 @@
 import { Resolver, Mutation, Arg } from 'type-graphql';
-import { redisClient } from '../db/redis';
+import { redisClient } from '../../db/redis';
 import { User } from '../../entity/User';
 import { confirmUserPrefix } from '../../constants/redisPrefixes';
 

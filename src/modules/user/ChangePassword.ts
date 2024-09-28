@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 import { User } from '../../entity/User';
 import { MyContext } from '../../types/MyContext';
 import { ChangePasswordInput } from './inputs/ChangePasswordInput';
-import { redisClient } from '../db/redis';
+import { redisClient } from '../../db/redis';
 import { changePasswordPrefix } from '../../constants/redisPrefixes';
 
 @Resolver()

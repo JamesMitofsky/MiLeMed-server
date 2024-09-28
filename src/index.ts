@@ -4,7 +4,7 @@ import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import { buildSchema } from 'type-graphql';
 import cors from 'cors';
-import { AppDataSource } from './modules/db/AppDataSource';
+import { AppDataSource } from './db/AppDataSource';
 import express from 'express';
 import { MyContext } from './types/MyContext';
 import { WebSocketServer } from 'ws';

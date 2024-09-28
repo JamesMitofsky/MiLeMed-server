@@ -1,6 +1,6 @@
 import RedisStore from 'connect-redis';
 import session from 'express-session';
-import { redisClient } from '../db/redis';
+import { redisClient } from '../../db/redis';
 import { nodeEnv } from '../environmentVariables';
 
 const redisStore = new RedisStore({
